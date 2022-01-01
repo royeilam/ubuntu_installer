@@ -1,0 +1,43 @@
+" Basic Seutp:
+
+set nocompatible
+
+" Enable synax and plugins:
+syntax enable
+filetype plugin on
+
+" FINDING FILES:
+
+" Search down into subfolders
+" Provide tab-completion for all file-related tasks
+set path+=**
+
+" Display all matching files when we tab complete
+set wildmenu
+
+" Create a `tags` file (may need to install ctags firt)
+command! MakeTags !ctags -R
+
+" NOW WE CAN:
+"- Use ^] to jump to tag under cursor
+"- use g^] for ambigous tags
+"- ust ^t to jump bag up the tags stack
+
+set showcmd
+colorscheme codedark
+syntax on
+set nu rnu
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set smartindent
+autocmd FileType make set noexpandtab
+set exrc
+set secure
+set wrap linebreak
+" Highlight searcc
+set hlsearch
+au BufNewFile,BufRead *.s,*.S set filetype=arm " arm = arm6/7
+au BufNewFile,BufRead *.shader setf opengl" arm = arm6/7
+" Set automatic syntax folding
+set foldmethod=syntax

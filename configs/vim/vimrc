@@ -1,0 +1,44 @@
+" Basic Seutp:
+
+set nocompatible
+
+" Enable synax and plugins:
+syntax enable
+filetype plugin on
+
+" FINDING FILES:
+
+" Search down into subfolders
+" Provide tab-completion for all file-related tasks
+set path+=**
+
+" Display all matching files when we tab complete
+set wildmenu
+
+" Create a `tags` file (may need to install ctags firt)
+command! MakeTags !ctags -R
+
+" NOW WE CAN:
+"- Use ^] to jump to tag under cursor
+"- use g^] for ambigous tags
+"- ust ^t to jump bag up the tags stack
+
+" Set Relative Line Numbering:
+set rnu
+
+" Change colotheme to codedark
+colorscheme codedark
+
+" Change tabs to 4 spaces
+set tabstop=4       " The width of a TAB is set to 4.
+                    " Still it is a \t. It is just that
+                    " Vim will interpret it to be having
+                    " a width of 4.
+set shiftwidth=4    " Indents will have a width of 4.
+set softtabstop=4   " Sets the number of columns for a TAB.
+set expandtab       " Expand TABs to spaces.
+
+" PLUG INS:
+call plug#begin('~/.vim/plugged')
+Plug 'git@github.com/Valloric/YouComleteMe.git'
+call plug#end()
