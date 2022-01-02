@@ -13,24 +13,41 @@ function prompt_question()
     fi
 }
 
+function run_command()
+{
+	$1
+	if [ $? -ne 0 ]
+	then
+		echo "Cannot execute $1"
+		exit 1
+	fi
+}
+
 # Insalling necessary apps
 APP_LIST="vim tmux curl python3 exuberant-ctags zsh git fonts-powerline"
 
-sudo apt update
-sudo apt upgrade
-sudo apt -y install $APP_LIST
+run_command "sudo apt update"
+run_command "sudo apt upgrade"
+run_command "sudo apt -y install $APP_LIST"
 
 # Configure vim
 prompt_question "-e $USER_DIR/.vimrc" "VIM"
 
 if [ "$answer" == "Y" ]
 then
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     VIM_THEME_DIR=$USER_DIR/.vim/colors
     mkdir -p $VIM_THEME_DIR
     cp -f $CONFIG_DIR/vim/codedark.vim $VIM_THEME_DIR/codedark.vim
     cp -f $CONFIG_DIR/vim/vimrc $USER_DIR/.vimrc
+    run_command "curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    run_command "vim +PlugInstall +qall"
+
+    # Installing YouCompleteMe
+    run_command "pushd $USER_DIR/.vim/plugged/YouCompleteMe"
+    run_command "sudo apt install -y build-essential cmake vim-nox python3-dev"
+    run_command "sudo apt install -y mono-complete golang nodejs default-jdk npm"
+    run_command "python3 install.py --all"
 fi
 
 #Configure Zshell
@@ -45,6 +62,7 @@ then
 
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     sed -i "s/^ZSH_THEME.*/ZSH_THEME=\"agnoster\"/" $USER_DIR/.zshrc
+    chsh -s $(which zsh)
 fi
 
 set +x

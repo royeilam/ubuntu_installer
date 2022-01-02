@@ -40,5 +40,5 @@ set expandtab       " Expand TABs to spaces.
 
 " PLUG INS:
 call plug#begin('~/.vim/plugged')
-Plug 'git@github.com/Valloric/YouComleteMe.git'
+Plug 'https://github.com/ycm-core/YouCompleteMe.git'
 call plug#end()
