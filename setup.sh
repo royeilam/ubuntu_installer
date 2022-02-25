@@ -39,15 +39,14 @@ then
     mkdir -p $VIM_THEME_DIR
     cp -f $CONFIG_DIR/vim/codedark.vim $VIM_THEME_DIR/codedark.vim
     cp -f $CONFIG_DIR/vim/vimrc $USER_DIR/.vimrc
-    run_command "curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    run_command "git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim"
     run_command "vim +PlugInstall +qall"
 
     # Installing YouCompleteMe
-    run_command "pushd $USER_DIR/.vim/plugged/YouCompleteMe"
-    run_command "sudo apt install -y build-essential cmake vim-nox python3-dev"
-    run_command "sudo apt install -y mono-complete golang nodejs default-jdk npm"
-    run_command "python3 install.py --all"
+    #run_command "pushd $USER_DIR/.vim/plugged/YouCompleteMe"
+    #run_command "sudo apt install -y build-essential cmake vim-nox python3-dev"
+    #run_command "sudo apt install -y mono-complete golang nodejs default-jdk npm"
+    #run_command "python3 install.py --all"
 fi
 
 #Configure Zshell
