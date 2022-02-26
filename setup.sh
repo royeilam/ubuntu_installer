@@ -1,7 +1,9 @@
 #!/bin/bash
 set -x
 
-USER_DIR=~
+pushd ~
+USER_DIR=$(pwd)
+popd
 CONFIG_DIR=configs
 function prompt_question()
 {
