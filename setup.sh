@@ -63,7 +63,11 @@ then
 
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     sed -i "s/^ZSH_THEME.*/ZSH_THEME=\"agnoster\"/" $USER_DIR/.zshrc
+    run_command "git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+    run_command "git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+    sed -i "s/plugins=(\(.*\))/plugins=(\1 zsh-autosuggestions zsh-syntax-highlighting)/g" $USER_DIR/.zshrc
     chsh -s $(which zsh)
+
 fi
 
 set +x
