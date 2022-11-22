@@ -17,55 +17,59 @@ function prompt_question()
 
 function run_command()
 {
-	$1
+	$@
 	if [ $? -ne 0 ]
 	then
-		echo "Cannot execute $1"
+		echo "Cannot execute $@"
 		exit 1
 	fi
 }
 
 # Insalling necessary apps
-APP_LIST="vim tmux curl python3 exuberant-ctags zsh git fonts-powerline"
+APP_LIST="neovim tmux curl python3 exuberant-ctags zsh git fonts-powerline nodejs npm fzf ripgrep"
 
-run_command "sudo apt update"
-run_command "sudo apt upgrade"
-run_command "sudo apt -y install $APP_LIST"
+run_command sudo apt update
+run_command sudo apt upgrade
+run_command sudo apt -y install $APP_LIST
 
-# Configure vim
-prompt_question "-e $USER_DIR/.vimrc" "VIM"
+# Configure neovim
+prompt_question "-d ${USER_DIR}/.config/nvim" "NEOVIM"
 
 if [ "$answer" == "Y" ]
 then
-    VIM_THEME_DIR=$USER_DIR/.vim/colors
-    mkdir -p $VIM_THEME_DIR
-    cp -f $CONFIG_DIR/vim/codedark.vim $VIM_THEME_DIR/codedark.vim
-    cp -f $CONFIG_DIR/vim/vimrc $USER_DIR/.vimrc
-    run_command "git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim"
-    run_command "vim +PlugInstall +qall"
+    sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
-    # Installing YouCompleteMe
-    #run_command "pushd $USER_DIR/.vim/plugged/YouCompleteMe"
-    #run_command "sudo apt install -y build-essential cmake vim-nox python3-dev"
-    #run_command "sudo apt install -y mono-complete golang nodejs default-jdk npm"
-    #run_command "python3 install.py --all"
+    run_command mkdir -p ${USER_DIR}/.config/nvim
+    run_command cp -f ${CONFIG_DIR}/nvim/init.vim ${USER_DIR}/.config/nvim/
+    run_command nvim +PlugInstall +qall
+    # Installing CoC
+    pushd ${USER_DIR}/.config/nvim/plugged/coc.nvim
+    # Installing YARN
+    run_command sudo npm install -g yarn
+    run_command yarn install
+    run_command yarn build
+    popd
+    run_command nvim +"CocInstall coc-pyright" +qa
+    run_command nvim +"CocInstall coc-clangd" +qa
+
 fi
 
 #Configure Zshell
-prompt_question "-d $USER_DIR/.oh-my-zsh" "OH-MY_ZSHELL"
+prompt_question "-d ${USER_DIR}/.oh-my-zsh" "OH-MY_ZSHELL"
 
 if [ $answer == "Y" ]
 then
-    if [ -d $USER_DIR/.oh-my-zsh ]
+    if [ -d ${USER_DIR}/.oh-my-zsh ]
     then
-        rm -rf $USER_DIR/.oh-my-zsh
+        rm -rf ${USER_DIR}/.oh-my-zsh
     fi
 
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    sed -i "s/^ZSH_THEME.*/ZSH_THEME=\"agnoster\"/" $USER_DIR/.zshrc
-    run_command "git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
-    run_command "git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
-    sed -i "s/plugins=(\(.*\))/plugins=(\1 zsh-autosuggestions zsh-syntax-highlighting)/g" $USER_DIR/.zshrc
+    sed -i "s/^ZSH_THEME.*/ZSH_THEME=\"agnoster\"/" ${USER_DIR}/.zshrc
+    run_command git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    run_command git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    sed -i "s/plugins=(\(.*\))/plugins=(\1 zsh-autosuggestions zsh-syntax-highlighting)/g" ${USER_DIR}/.zshrc
     chsh -s $(which zsh)
 
 fi
